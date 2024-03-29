@@ -27,8 +27,8 @@ class CustomerAdmin(ModelAdmin):
         'tag',
     )
     fields = [
-        'booking_id',
-        'uid',
+        # 'booking_id',
+        # 'uid',
         'status',
         ('start', 'end'),
         'duration',
@@ -50,6 +50,7 @@ class CustomerAdmin(ModelAdmin):
         'tag',
     ]
     readonly_fields = (
+        'uid',
         'booking_id',
         'status',
         'start',

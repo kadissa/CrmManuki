@@ -1,6 +1,6 @@
 import datetime
 import logging
-from django.shortcuts import get_object_or_404
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import generic
 from dotenv import load_dotenv
@@ -17,20 +17,30 @@ logging.basicConfig(level=logging.DEBUG, filename='logs/bnovo_views.log',
 
 class TodayListView(LoginRequiredMixin, generic.ListView):
     model = Customer
-
     today = datetime.date.today().isoformat()
     debug_today = datetime.datetime.now().strftime('%Y-%m-%d')
     template_name = 'base.html'
 
     def get_queryset(self):
-        today = datetime.date.today().isoformat()
+        if self.kwargs:
+            delta = self.kwargs['date']
+        else:
+            delta = 0
+        any_day = datetime.date.today() + datetime.timedelta(days=int(delta))
+
+        today = any_day.isoformat()
         super().get_queryset()
         queryset = (Customer.objects.filter(real_arrival__contains=today) |
                     Customer.objects.filter(real_departure__contains=today))
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        today = datetime.date.today().isoformat()
+        if self.kwargs:
+            delta = self.kwargs['date']
+        else:
+            delta = 0
+        any_day = datetime.date.today() + datetime.timedelta(days=int(delta))
+        today = any_day.isoformat()
         context = super(TodayListView, self).get_context_data(**kwargs)
         sauna = (Guest.objects.filter(start__contains=today).exclude(
             status='Отменено') &
@@ -38,6 +48,7 @@ class TodayListView(LoginRequiredMixin, generic.ListView):
                      ful_name='Уборщик'))
         context['today'] = today
         context['sauna'] = sauna
+        context['delta'] = delta
         return context
 
 
