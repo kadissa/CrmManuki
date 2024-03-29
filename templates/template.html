@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" type="text/css" href="
+{% static 'bootstrap/css/bootstrap.min.css' %}">
+  <style>
+      body, html {
+          height: 100%;
+          margin: 0;
+      }
+      .bg {
+          /* The image used */
+          background-image: url("{% static 'image/photo.jpg' %}");
+          /* Full height */
+          height: 100%;
+          background-size: cover;
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+          background-attachment: scroll;
+      }
+  </style>
+</head>
+<body>
+<div class="bg">
+  {% for object in object_list %}
+    <div class="row">
+      <div class="col-md-4 col-xl-3">
+        <div class="card w-75 mx-auto text-center border-secondary-subtle">
+          {% if today in object.real_arrival %}
+            <h4 class="card-header bg-success-subtle">Заселение</h4>
+          {% elif today in object.real_departure %}
+            <h4 class="card-header bg-success-subtle">Выезд</h4>
+          {% else %}
+            <h4 class="card-header bg-success-subtle">Нет ордеров</h4>
+          {% endif %}
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{ object }}</li>
+            {% if object.room_id == '875458' %}
+              <li class="list-group-item text-success">Шале с видом на сад.
+              </li>
+            {% elif object.room_id == '875457' %}
+              <li class="list-group-item text-success">Шале с камином.</li>
+            {% else %}
+              <li class="list-group-item text-success">Отсутствует room_id</li>
+            {% endif %}
+            <li class="list-group-item">Заезд: {{ object.real_arrival }}</li>
+            <li class="list-group-item">Выезд: {{ object.real_departure }}</li>
+            <li class="list-group-item">{{ object.phone }}</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="nav text-center">
+      <h2>На сегодня на домики ордеров нет</h2>
+    </div>
+  {% endfor %}
+</div>
+</body>
+</html>

@@ -4,5 +4,5 @@ from . import views
 app_name = 'webhooks'
 
 urlpatterns = [
-    path('', views.easyweek_hook, name='webhooks')
+    path('', views.easyweek_hook, name='webhooks'),
 ]
