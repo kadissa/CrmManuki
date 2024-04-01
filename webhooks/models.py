@@ -52,4 +52,4 @@ class Guest(models.Model):
             fields=['booking_id', 'status'], name='unique_booking_id_status')]
 
     def __str__(self):
-        return self.email
+        return self.ful_name

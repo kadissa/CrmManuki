@@ -1,5 +1,6 @@
 import json
 import logging
+import os
 import threading
 from secrets import compare_digest
 
@@ -8,7 +9,7 @@ from django.http import HttpResponse, HttpResponseForbidden
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-
+from django.core.mail import send_mail
 from webhooks.api_connect import *
 from webhooks.models import WebhookData, Guest
 
@@ -53,6 +54,31 @@ def get_cleaned_data(data):
     return cleaned_data
 
 
+def check_black_list_tag(webhook_data):
+    time.sleep(4)
+    queryset_list = Guest.objects.filter(tag='black-list')
+    phone = webhook_data.get('customer_phone')
+    email = webhook_data.get('customer_email')
+    logging.debug([obj for obj in queryset_list])
+    for obj in queryset_list:
+        logging.debug(f'в цикле {obj.email}, '
+                      f'Email:{webhook_data.get('customer_email')}, '
+                      f'Имя:{webhook_data.get('customer_full_name')}, '
+                      f'Телефон:{webhook_data.get('customer_phone')}, '
+                      f'obj.phone:{obj.phone}')
+        if phone == obj.phone or email == obj.email:
+            logging.debug(f'---{email} --{obj.email}--')
+            send_mail(
+                subject='Внимание',
+                from_email=os.getenv('EMAIL_HOST_USER'),
+                message=f'Гость {obj.ful_name} с меткой '
+                        'black-list забронировал баню на '
+                        f'{webhook_data.get("booking_date_start")}',
+                recipient_list=['kadissa70@gmail.com']
+            )
+            logging.info('письмо отправлено')
+
+
 @csrf_exempt
 @require_POST
 @non_atomic_requests
@@ -79,6 +105,7 @@ def easyweek_hook(request):
     logging.info(f'статус:{status}, '
                  f'customer_name:{customer_name}, '
                  f'end_booking:{end_booking}')
+    threading.Thread(target=check_black_list_tag, args=(payload,)).start()
     Guest.objects.update_or_create(booking_id=booking_id,
                                    defaults=get_cleaned_data(payload))
     if (status == 'Новое бронирование' and

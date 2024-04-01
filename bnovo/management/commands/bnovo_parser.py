@@ -3,10 +3,12 @@ import os
 import time
 import logging
 from pprint import pprint
-
+from django.core.mail import send_mail
 import requests
 from django.core.management.base import BaseCommand, CommandError
 from bnovo.models import Customer
+from webhooks.models import Guest
+
 logging.basicConfig(level=logging.DEBUG, filename='logs/bnovo_parser.log',
                     filemode='a', format='%(asctime)s, %(levelname)s, '
                                          '%(message)s, %(name)s, %(funcName)s')
@@ -23,6 +25,8 @@ HEADERS = {
 response = session.post(BASE_URL, data=HEADERS)
 
 
+# '875458'  шале с видом на сад
+# '875457'  шале с камином
 # room_type = session.get(BASE_URL + '/roomTypes/get',
 #                         headers={'Accept': 'application/json'})
 # room = session.get(BASE_URL + '/room',
@@ -48,7 +52,6 @@ def get_all_booking(one_session: session):
             }
         )
         result: list[dict] = bookings.json().get('result')
-        pprint(result)
         logging.debug(f'получено броней: {len(result)}шт.')
         return result
     except Exception as e:
@@ -104,6 +107,7 @@ class Command(BaseCommand):
             while True:
                 # write_to_data_base(get_all_booking(session))
                 update_data_base(get_all_booking(session))
+                pprint(get_all_booking(session))
                 time.sleep(10)
         except:
             logging.error('handle не отработал.')

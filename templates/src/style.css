@@ -1,0 +1,64 @@
+body, html {
+    height: 100%;
+    margin: 0;
+}
+
+.bg {
+    /* The image used */
+    background-image: url("images/load_page_template.png");
+    /* Full height */
+    height: 100%;
+
+    background-size: cover;
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+
+    background-attachment: scroll;
+}
+
+
+.bg .vk {
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    /*background-color: rgba(0, 0, 0, 0);*/
+    background: rgba(0, 0, 0, 0);
+    color: #664d03;
+    font-size: 16px;
+    /*padding: 12px 24px;*/
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.bg .whatsapp {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    /*background-color: rgba(0, 0, 0, 0);*/
+    background: rgba(0, 0, 0, 0);
+    color: #664d03;
+    font-size: 16px;
+    /*padding: 12px 24px;*/
+    border: none;
+    cursor: pointer;
+    /*border-radius: 5px;*/
+    text-align: center;
+}
+
+@media only screen and (max-width: 500px) {
+    .bg {
+        background-image: url("images/abstrakciya-obekty-ogon-svechi-voda-5551.jpeg");
+    }
+}
+
+div .btn {
+    border-radius: 20px;
+}
+

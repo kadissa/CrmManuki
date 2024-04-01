@@ -14,8 +14,8 @@ class CustomerAdmin(admin.ModelAdmin):
     fields = ('booking_id', 'phone', 'full_name', 'real_arrival',
               'real_departure', 'email', 'adults',
               'source', 'tag')
-    readonly_fields = ('booking_id', 'phone', 'full_name', 'real_arrival',
-                       'real_departure', 'email', 'adults',
+    readonly_fields = (
+                       'real_departure', 'adults',
                        'source',)
     list_editable = ('tag',)
     list_filter = ['source']
