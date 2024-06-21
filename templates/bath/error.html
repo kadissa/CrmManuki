@@ -1,0 +1,19 @@
+{% extends 'bath/base.html' %}
+{% block title %}
+  Ошибка
+{% endblock %}
+{% block content %}
+  <div class="text-info bg-danger col-md-4 col-xl-4 col-auto mx-auto 
+	 text-center">
+    Что-то пошло не так, попробуйте
+    начать сначала или
+    свяжитесь с администратором.
+  </div>
+  <div class="col-md-4 col-xl-4 col-auto mx-auto mt-5 text-center">
+    <a href="{% url 'user' %}">
+      <button type="button" class="bg-danger text-info">
+        Начать сначала
+      </button>
+    </a>
+  </div>
+{% endblock %}

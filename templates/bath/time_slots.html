@@ -1,0 +1,36 @@
+{% extends 'bath/base.html' %}
+{% load extend_filters %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% block content %}
+  <br>
+  {% include 'bath/includes/header.html' %}
+  <br>
+  <div class="form-group text-center">
+    <span class="border-bottom text-bg-info 
+        text-white rounded-1 pt-2 pb-2">
+      <span>
+        Свободные слоты на {{ date }}
+      </span>
+    </span>
+  </div>
+  <div class="container text-center" id="time-slots">
+  {% include 'bath/includes/time_slots_template.html' %}
+    <a href="{% url 'user' %}">
+      <button class="btn mt-3 bg-white border-info" style="float: 
+        left">Выбрать другой день или время
+      </button>
+    </a>
+    {% if times %}
+      {% if times|length_is:1 %}
+        <button class="btn mt-3 btn-danger" style="float: right" type="submit">
+          Выберите более одного слота
+        </button>
+      {% else %}
+        
+        {% include 'bath/includes/messages.html' %}
+        
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}

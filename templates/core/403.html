@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Custom 403{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-4 col-xl-3">
+      <div class="card w-75 mx-auto text-center border-secondary-subtle">
+        <div class="card-header bg-danger"> Доступ закрыт.</div>
+        <h3 class="text-bg-secondary">Вам не хватает прав для редактирования карточек.</h3>
+        <a href="{% url 'bnovo:today_list' %}" style="text-decoration: 
+          #1a1d20">
+          <h4 class="card-footer ">Вернуться к ордерам</h4>
+        </a>
+      </div>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'bath/base.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% block title %}
+  Услуги
+{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-4 col-xl-4">
+      <div class="card w-75 mx-auto text-center border-secondary-subtle">
+        {% if messages %}
+          {% for message in messages %}
+            <h4 class="card-header bg-danger">
+              {{ message }}
+            </h4>
+          {% endfor %}
+        {% else %}
+          <h4 class="card-header bg-success-subtle">Добавить
+            аксессуары</h4>
+        {% endif %}
+          <form action="" method="post">
+            {% csrf_token %}
+        <ul class="list-group list-group-flush">
+            {% for product in products %}
+                <li class="list-group-item">
+                  <label for="{{ product }}">
+                    {{ product.name }} {{ product.price }}р.
+                  </label><br>
+                  <input type="number" name="{{ product.name }}"
+                         id="{{ product }}"
+                         placeholder="шт.">
+                </li>
+            {% endfor %}
+        </ul>
+            <a href="{% url 'confirm_date_time' appointment_id %}">
+              <button type="button" class="btn btn-secondary
+            rounded-1 text-black">
+                Отменить
+              </button>
+            </a>
+            <button type="submit" class="btn  btn-info">
+              Добавить
+            </button>
+          </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

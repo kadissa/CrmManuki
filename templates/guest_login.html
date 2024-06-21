@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block title %}
+  Авторизация
+{% endblock %}
+
+{% block content %}
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+    <div class="row">
+      <div class="card w-75 mx-5 text-center border-secondary-subtle">
+        <h4 class="card-header bg-success-subtle">Авторизация</h4>
+        <form action="{% url 'login' %}" method="post">
+          {% csrf_token %}
+          {{ form | crispy }}
+          <br>
+          <button type="submit" class="btn btn-info w-100">Войти</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  
+{% endblock %}
+
+
+

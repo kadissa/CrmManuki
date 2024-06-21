@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}
+  Заказ {{ guest.ful_name }}
+{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-4 col-xl-3">
+      <div class="card w-75 mx-auto text-left border-secondary-subtle">
+        <h4 class="card-header bg-success-subtle text-center">
+          Ваш заказ.
+        </h4>
+        <ul class="list-group list-group-flush">
+{#          {% if object.rotenburo_1 %}#}
+            <li class="list-group-item">
+              Ротенбуро - {{ object.rotenburo }}р.
+            </li>
+{#          {% endif %}#}
+          {% if object.birch_broom%}<li class="list-group-item">
+            Веник берёза -
+            {{ guest.birch_broom }}шт.- {{ object.birch_broom }}руб.
+          </li>{% endif %}
+
+          {% if object.oak_broom%}<li class="list-group-item">
+            Веник дуб - {{ guest.oak_broom }}шт.- {{ object.oak_broom }}руб.
+          </li>{% endif %}
+
+          {% if object.bed_sheet%}<li class="list-group-item">
+            Простыня - {{ guest.bed_sheet }}шт. - {{ object.bed_sheet }}р.
+          </li>{% endif %}
+
+          {% if object.towel%}<li class="list-group-item">
+            Полотенце - {{ guest.towel }}шт.- {{ object.towel }}р.
+          </li>{% endif %}
+
+          {% if object.robe%}<li class="list-group-item">
+            Халат - {{ guest.robe }}шт. - {{ object.robe }}р.
+          </li>{% endif %}
+
+          {% if object.slippers%}<li class="list-group-item">
+            Тапки - {{ guest.slippers }}шт.- {{ object.slippers }}р.
+          </li>{% endif %}
+
+          <li class="list-group-item">
+            Стоимость доп. услуг - {{ object.total_accessories_price }}р.
+          </li>
+        <li class="list-group-item text-info">
+          Общая стоимость заказа - {{ object.total_price }}р.
+        </li>
+        </ul>
+        <a href="https://wa.me/79219509028?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D1%83%D0%B9%D1%82%D0%B5!%20%F0%9F%91%8B" style="text-decoration:
+          #1a1d20" class="text-center">
+
+      <button type="button" class="btn-outline-info btn-link text-center
+">WhatsApp</button>
+          </a>
+          <h6 class="card-footer text-danger">Для оплаты заказа, пожалуйста
+            свяжитесь с
+            администратором в WhatsApp или по телефону +79219509028
+          </h6>
+
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

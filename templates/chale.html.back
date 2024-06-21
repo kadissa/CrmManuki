@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Карта гостя</title>
+  <link rel="stylesheet" type="text/css" href="
+{% static 'bootstrap/css/bootstrap.min.css' %}">
+  <style>
+      body, html {
+          height: 100%;
+          margin: 0;
+      }
+
+      .bg {
+          /* The image used */
+          background-image: url("{% static 'image/photo.jpg' %}");
+
+          /* Full height */
+          height: 100%;
+
+          background-size: cover;
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+
+          background-attachment: scroll;
+      }
+  </style>
+</head>
+<body>
+<div class="bg">
+  <div class="row">
+    <div class="col-md-4 col-xl-3">
+      <div class="card w-75 mx-auto text-center border-secondary-subtle">
+        {% if chale.room_id == '875457' %}
+        <h4 class="card-header bg-success-subtle">Шале с камином.</h4>
+        	{% elif chale.room_id == '875458' %}
+        <h4 class="card-header bg-success-subtle">Шале с видом на сад.</h4>
+          {% else %}
+        <h4 class="card-header bg-success-subtle">Домик не определён</h4>
+        {% endif %} 
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">{{ chale.full_name }}</li>
+          <li class="list-group-item">{{ chale.phone }}</li>
+          <li class="list-group-item">Заезд: {{ chale.real_arrival }}</li>
+          <li class="list-group-item">Выезд: {{ chale.real_departure }}</li>
+          <li class="list-group-item">Кол. человек - {{ chale.adults }}</li>
+          <li class="list-group-item">Email: {{ chale.email }}</li>
+          <li class="list-group-item">Источник: {{ chale.source }}</li>
+
+{#        <li class="list-group-item">Предоплата -{{ chale. }}</li>#}
+          <li class="list-group-item">Примечание - {{ chale.tag }}</li>
+        </ul>
+        <a href="{% url 'bnovo:today_list' %}" style="text-decoration: 
+          #1a1d20">
+          <h4 class="card-footer ">Вернуться к ордерам</h4>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

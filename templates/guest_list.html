@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}
+  Карточки клиентов
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row row-cols-3">
+      <div class="col text-left">
+        <a href="{% url 'bnovo:preview_day' date=any_day minus=1 %}">
+          <h4 type="button" class="btn  text-light text-center
+          border-primary">
+            <------
+          </h4>
+        </a>
+      </div>
+      <div class="col text-left">
+        <a href="{% url 'bnovo:today_list' %}">
+          <h4 type="button" class="btn  text-light text-center
+          border-primary">
+            Сегодня
+          </h4>
+        </a>
+      </div>
+      <div class="col text-right">
+        <a href="{% url 'bnovo:any_day' date=any_day %}">
+          <h4 type="button" class="btn  text-light text-center border-primary">
+            ------>
+          </h4>
+        </a>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col text-center">
+          <h4 class="text-light text-center border-primary tex">
+            {{ today }}
+          </h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+    {% for object in object_list %}
+      <div class="row">
+        <div class="card w-75 mx-5 text-center border-secondary-subtle">
+          {% if today in object.real_arrival %}
+            <a href="{% url 'bnovo:chale_detail' object.pk %}"
+               style="text-decoration: none">
+              <h4 class="card-header bg-success-subtle">Заселение</h4>
+            </a>
+          {% elif today in object.real_departure %}
+            <a href="{% url 'bnovo:chale_detail' object.pk %}"
+               style="text-decoration: none">
+              <h4 class="card-header bg-success-subtle">Выезд</h4>
+            </a>
+          {% else %}
+            <h4 class="card-header bg-success-subtle">Нет ордеров</h4>
+          {% endif %}
+          <ul class="list-group list-group-flush">
+            {% if object.room_id == '875458' %}
+              <li class="list-group-item text-success">Шале с видом на сад.
+              </li>
+            {% elif object.room_id == '875457' %}
+              <li class="list-group-item text-success">Шале с камином.</li>
+            {% else %}
+              <li class="list-group-item text-success">Отсутствует room_id</li>
+            {% endif %}
+            <li class="list-group-item">{{ object }}</li>
+            <li class="list-group-item">Заезд: {{ object.real_arrival }}</li>
+            <li class="list-group-item">Выезд: {{ object.real_departure }}</li>
+            <li class="list-group-item">{{ object.phone }}</li>
+          </ul>
+        </div>
+      </div>
+    {% empty %}
+      <div class="nav text-center mx-5 border-secondary-subtle">
+        <h4 class="text-bg-info">На {{ today }} на домики ордеров нет</h4>
+      </div>
+    {% endfor %}
+  </div>
+  <div style="display: flex; flex-direction: row; flex-wrap: wrap">
+    {% for object in sauna %}
+      <div class="row">
+        <div class="card w-75 mx-5 text-center border-secondary-subtle">
+          <a href="{% url 'bnovo:sauna_detail' object.pk %}"
+             style="text-decoration: none">
+            <h4 class="card-header bg-success-subtle">Баня</h4>
+          </a>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">{{ object.customer.name }}</li>
+            {% if object.rotenburo %}
+              <li class="list-group-item text-success">Подготовить
+                Ротэнбуро
+              </li>
+            {% endif %}
+            <li class="list-group-item">
+              Время начала {{ object.start_time |slice:'-6:' }}
+            </li>
+            <li class="list-group-item">
+              Время окончания {{ object.end_time | slice:'-6:' }}
+            </li>
+            <li class="list-group-item">Тел: {{ object.customer.phone }}</li>
+          </ul>
+        </div>
+      </div>
+    {% empty %}
+      <div class="row">
+        <div class="col-auto">
+          <h4 class="text-bg-info mx-5">
+            На {{ today }} на баню ордеров нет
+          </h4>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  {% if user.is_admin or user.is_superuser or user.is_staff %}
+    <div class="container">
+      <div class="col-md-1  bg-primary-subtle">
+        <a href="/admin">
+          <button type="submit" class="btn btn-outline-info w-100">
+            admin
+          </button>
+        </a>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}

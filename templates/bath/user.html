@@ -1,0 +1,30 @@
+{% extends 'bath/base.html' %}
+{% load crispy_forms_filters %}
+{% load crispy_forms_tags %}
+{% block title %}
+  Регистрация
+{% endblock %}
+{% block content %}
+  {% include 'bath/includes/header.html' %}
+  <form action="" method="post">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-md-4 col-xl-4 col-auto mx-auto mt-5">
+        {{ form | crispy }}
+        <label for="start" class="text-bg-light rounded-1 lh-lg">
+          <b class="border-info text-info">
+            Выбрать день
+          </b>
+        </label>
+        <input type="date" id="start" value="{{ min_day }}" name="date"
+               min="{{ min_day }}"
+               max="{{ max_day }}" class="form-control-sm border-info">
+        <div style="float: right">
+          <button type="submit" class="btn btn-success align-bottom btn-sm">
+            Далее
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+{% endblock %}

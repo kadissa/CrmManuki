@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% load crispy_forms_filters %}
+{% block title %}
+  Аксессуары
+{% endblock %}
+{% block content %}
+  <div class="row">
+    <div class="col-md-4 col-xl-3">
+      <div class="card w-75 mx-auto text-center border-secondary-subtle">
+        <h4 class="card-header bg-success-subtle">Добавить аксессуары</h4>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">{{ object.ful_name }}</li>
+          <li class="list-group-item">{{ object.phone }}</li>
+          <li class="list-group-item">Заезд: {{ object.start }}</li>
+          <li class="list-group-item">Выезд: {{ object.end }}</li>
+          <form action="" method="post">
+            {% csrf_token %}
+            <li class="list-group-item">{{ form | crispy }}</li>
+            <button type="submit" class="btn card-footer btn-primary bg-info
+">Применить
+            </button>
+          </form>
+
+        </ul>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

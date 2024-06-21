@@ -1,0 +1,36 @@
+{% extends 'bath/base.html' %}
+{% load extend_filters %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% block content %}
+  <br>
+  {% include 'bath/includes/header.html' %}
+  <br>
+
+  <div class="container text-center" id="time-slots">
+
+  {% include 'bath/includes/time_slots_template.html' %}
+
+  <div class="container text-center">
+    <a href="{% url 'confirm_date_time' appointment.pk %}">
+      <button class="btn mt-3 bg-primary-subtle border-info" style="float: 
+        left"
+      >
+        Без Ротенбуро
+      </button>
+    </a>
+    {% if times %}
+      {% include 'bath/includes/inputs/reset_times_input.html' %}
+    {% endif %}
+  </div>
+
+  {% if times %}
+
+
+{% include 'bath/includes/messages.html' %}
+
+
+  {% endif %}
+{% endblock %}
+
+</div>

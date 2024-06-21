@@ -1,0 +1,47 @@
+{% load extend_filters %}
+{#<div class="container text-center" id="time-slots">#}
+  <div class="row row-cols-md-6  justify-content-center">
+    {% for key, time_slot in available_slots.items %}
+      <div class="col">
+        {% with date|date:'w' as week_day %}
+          {% if time_slot not in times %}
+            {% if week_day|str_to_int > 5  or week_day|str_to_int == 0 %}
+              <label for="{{ time_slot }}" class="bg-opacity-50 
+                bg-success mt-3 
+                border-1 
+                border rounded">
+                2500руб.
+              </label>
+            {% elif week_day|str_to_int == 5 and key|str_to_int > 17 %}
+              <label for="{{ time_slot }}" class="bg-opacity-50 
+              bg-success mt-3 
+                border-1 
+                border rounded">
+                2500руб.
+              </label>
+            {% else %}
+              <label for="{{ time_slot }}" class="bg-opacity-50 
+              bg-success mt-3 
+                border-1 
+                border rounded">
+                2000руб.
+              </label>
+            {% endif %}
+            {% if  rotenburo_times %}
+              {% include 'bath/includes/inputs/rotenburo_times_input.html' %}
+            {% elif bath_times %}
+              {% include 'bath/includes/inputs/time_slots_input.html' %}
+            {% endif %}
+
+          {% else %}
+            <input type="text" name="time" size="8"
+                   value="{{ time_slot }}"
+                   class="mt-3 btn btn-warning bg-white"
+                   readonly
+                   disabled
+            >
+          {% endif %}
+        {% endwith %}
+      </div>
+    {% endfor %}
+  </div>

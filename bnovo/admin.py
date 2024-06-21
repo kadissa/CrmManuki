@@ -4,9 +4,9 @@ from .models import Customer
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'booking_id', 'full_name', 'phone',
+    list_display = ('booking_id', 'full_name', 'phone',
                     # 'email',
-                    # 'source',
+                    'source',
                     'real_arrival',
                     'real_departure',
                     'colored_name', 'tag',)
@@ -15,8 +15,14 @@ class CustomerAdmin(admin.ModelAdmin):
               'real_departure', 'email', 'adults',
               'source', 'tag')
     readonly_fields = (
-                       'real_departure', 'adults',
-                       'source',)
+        'booking_id',
+        'full_name',
+        'real_arrival',
+        'real_departure',
+        'email',
+        'adults',
+        'source',
+    )
     list_editable = ('tag',)
     list_filter = ['source']
     empty_value_display = '-пусто-'

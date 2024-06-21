@@ -1,0 +1,11 @@
+<input type="text" name="time" size="8" id="{{ time_slot }}"
+                   value="{{ time_slot }}"
+                   class="mt-0 btn btn-warning bg-white"
+                   
+                   hx-post="{% url 'rotenburo_times' appointment.pk %}"
+                   hx-target=""
+                   hx-trigger="click"
+                   hx-push-url="true"
+                   HX-Refresh="true"
+                   readonly
+            >

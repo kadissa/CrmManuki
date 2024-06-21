@@ -234,3 +234,7 @@ static
 site
 templates/css
 templates/src
+/static/
+!sent_emails
+!/tilda.txt
+tilda.txt

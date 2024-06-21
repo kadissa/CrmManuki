@@ -1,0 +1,11 @@
+<input type="text"
+           name="reset" size="8"
+           id="{{ time_slot }}"
+           value="Сбросить"
+           class="btn mt-3 bg-primary-subtle border-info"
+           hx-post="{% url 'rotenburo_times' appointment.pk %}"
+           hx-target=""
+           hx-trigger="click"
+           hx-push-url="true"
+           HX-Refresh="true"
+           readonly>

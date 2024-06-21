@@ -1,0 +1,77 @@
+{% extends 'bath/base.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_field %}
+{% block title %}
+  Корзина
+{% endblock %}
+{% block content %}
+  <br>
+  <div class="row">
+    <div class="col-md-4 col-xl-4">
+      <div class="card w-75 mx-auto text-left border-secondary-subtle">
+        <h4 class="card-header bg-success-subtle text-center">
+          Ваш заказ. <br>{{ appointment.date }} <br> с
+          {{ appointment.start_time }}
+          до {{ appointment.end_time }}
+        </h4>
+        <ul class="list-group list-group-flush">
+
+          {% for item in cart %}
+            {% if item.quantity %}
+              <li class="list-group-item text-info fst-italic">
+                {{ item.product.name }} - {{ item.quantity }} шт.
+                {{ item.total_price }}р.
+              </li>
+            {% endif %}
+          {% endfor %}
+{#          <li class="list-group-item text-info">#}
+{#            Стоимость доп. услуг - {{ appointment.services_price }}р.#}
+{#          </li>#}
+          <li class="list-group-item text-info fst-italic">
+            Ротенбуро - {{ rotenburo_price }}р.
+          </li>
+          <li class="list-group-item text-info fst-italic">
+            Баня - {{ appointment.price }}р.
+          </li>
+          <li class="list-group-item text-info fst-italic">
+            Общая стоимость заказа -
+            {{ appointment.price|add:appointment.services_price|add:rotenburo_price }}р.
+          </li>
+        </ul>
+        {% include 'bath/includes/order_payment.html' %}
+        <div class="row">
+          {#          <a href="{% url 'cart_remove' appointment.pk %}" type="button"#}
+          {#              class="button text-center text-decoration-none btn">#}
+          {#          <button class="rounded bg-info">#}
+          {#            Удалить допуслуги#}
+          {#          </button>#}
+          {#        </a>#}
+
+          {% if not rotenburo_price %}
+            <a href="{% url 'confirm_date_time' appointment.pk %}"
+               type="button"
+               class="button text-center text-decoration-none btn">
+              <button class="rounded bg-info">
+                Заказать ротенбуро
+              </button>
+            </a>
+        {% endif %}
+          {% if appointment.services_price == 0 %}
+            <a href="{% url 'confirm_date_time' appointment.pk %}"
+               type="button"
+               class="button text-center text-decoration-none btn">
+              <button class="rounded bg-info">
+                Заказать доп. услуги
+              </button>
+            </a>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+{% endblock %}

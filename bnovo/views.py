@@ -2,16 +2,16 @@ import datetime
 import logging
 import os
 
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import (LoginRequiredMixin)
 from django.core.mail import send_mail
 from django.db.models import signals
 from django.dispatch import receiver
 from django.views import generic
 from dotenv import load_dotenv
 
-from webhooks.models import Guest
+from bath.models import Appointment
 from .models import Customer
-from django.contrib.auth import get_user, get_user_model
+
 load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG, filename='logs/bnovo_views.log',
@@ -23,46 +23,55 @@ class TodayListView(LoginRequiredMixin, generic.ListView):
     model = Customer
     today = datetime.date.today().isoformat()
     debug_today = datetime.datetime.now().strftime('%Y-%m-%d')
-    template_name = 'index.html'
+    template_name = 'guest_list.html'
+
+    def get_any_day(self):
+        if self.kwargs:
+            if len(self.kwargs) > 1:
+                any_day = datetime.date.fromisoformat(self.kwargs['date'])
+                any_day -= datetime.timedelta(
+                    days=1)
+            else:
+                any_day = datetime.date.fromisoformat(self.kwargs['date'])
+                any_day += datetime.timedelta(days=1)
+        else:
+            any_day = datetime.date.today()
+        today = any_day.isoformat()
+        return today, any_day
 
     def get_queryset(self):
-        if self.kwargs:
-            delta = self.kwargs['date']
-        else:
-            delta = 0
-        any_day = datetime.date.today() + datetime.timedelta(days=int(delta))
-
-        today = any_day.isoformat()
+        today, any_day = self.get_any_day()
         super().get_queryset()
         queryset = (Customer.objects.filter(real_arrival__contains=today) |
                     Customer.objects.filter(real_departure__contains=today))
-        print()
         return queryset
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        if self.kwargs:
-            delta = self.kwargs['date']
-        else:
-            delta = 0
-        any_day = datetime.date.today() + datetime.timedelta(days=int(delta))
-        today = any_day.isoformat()
+        today, any_day = self.get_any_day()
         context = super(TodayListView, self).get_context_data(**kwargs)
-        sauna = (Guest.objects.filter(start__contains=today).exclude(
-            status='Отменено') &
-                 Guest.objects.filter(start__contains=today).exclude(
-                     ful_name='Уборщик'))
+        bath = Appointment.objects.filter(
+            date=datetime.date.fromisoformat(today)).exclude(
+            status='Отменено').order_by('date')
         context['today'] = today
-        context['sauna'] = sauna
-        context['delta'] = delta
-
+        context['sauna'] = bath
+        context['any_day'] = any_day
         return context
 
 
 class SaunaDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Guest
+    model = Appointment
     template_name = 'sauna.html'
     slug_field = 'id'
     context_object_name = 'sauna'
+
+    def get_context_data(self, **kwargs):
+        context = super(SaunaDetailView, self).get_context_data(**kwargs)
+        appointment = self.object
+        rotenburo = appointment.rotenburos.first()
+        accessories = appointment.items.all()
+        context['rotenburo'] = rotenburo
+        context['accessories'] = accessories
+        return context
 
 
 class ChaleDetailView(LoginRequiredMixin, generic.DetailView):
@@ -72,22 +81,17 @@ class ChaleDetailView(LoginRequiredMixin, generic.DetailView):
     context_object_name = 'chale'
 
 
-class ChaleDetailCreateView(LoginRequiredMixin, generic.CreateView):
-    form = ''
-
-
 @receiver(signals.post_save, sender=Customer)
 def check_about_black_list(sender, **kwargs):
-    """Ищет в базе объект с тегом 'black-list', сравнивает его телефон с
-    телефоном последней записи в базу. В случае совпадения отсылает email"""
+    """Слушает сигналы записи в базу. Ищет в базе объект с тегом 'black-list',
+    сравнивает его телефон с телефоном последней записи в базу. В случае
+    совпадения отсылает email"""
     black_list_queryset = sender.objects.filter(tag='black-list')
     last_object = sender.objects.latest('id')
     if black_list_queryset:
         for obj in black_list_queryset:
-            if last_object.phone == obj.phone:
-                print(f'Гость {last_object}, с меткой <black-list> '
-                      'забронировал домик на '
-                      f'{last_object.real_arrival}')
+            if (last_object.phone == obj.phone or
+                    last_object.email == obj.email):
                 send_mail(
                     subject='Внимание!',
                     message=f'Гость {last_object}, телефон:{last_object.phone}'
@@ -95,5 +99,6 @@ def check_about_black_list(sender, **kwargs):
                             f'забронировал домик на '
                             f'{last_object.real_arrival}',
                     from_email=os.getenv('EMAIL_HOST_USER'),
-                    recipient_list=['kadissa70@gmail.com']
+                    recipient_list=['kadissa70@gmail.com',
+                                    'Al.malafeev2015@yandex.ru']
                 )

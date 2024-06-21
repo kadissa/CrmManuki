@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  {% load static %}
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Карта гостя</title>
+  <link rel="stylesheet" type="text/css" href="
+{% static 'bootstrap/css/bootstrap.min.css' %}">
+  <style>
+      body, html {
+          height: 100%;
+          margin: 0;
+      }
+
+      .bg {
+          /* The image used */
+          background-image: url("{% static 'image/photo.jpg' %}");
+
+          /* Full height */
+          height: 100%;
+
+          background-size: cover;
+          /* Center and scale the image nicely */
+          background-position: center;
+          background-repeat: no-repeat;
+
+          background-attachment: scroll;
+      }
+  </style>
+</head>
+<body>
+<div class="bg">
+  <div class="row">
+    <div class="col-md-4 col-xl-3">
+      <div class="card w-75 mx-auto text-center border-secondary-subtle">
+        <h4 class="card-header bg-success-subtle">Баня</h4>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">{{ object.ful_name }}</li>
+          <li class="list-group-item">{{ object.phone }}</li>
+          <li class="list-group-item">Заезд: {{ sauna.start }}</li>
+          <li class="list-group-item">Выезд: {{ sauna.end }}</li>
+          <li class="list-group-item">Кол. человек -
+            {{ object.people_count }}</li>
+          {% if sauna.rotenburo %}
+            <li class="list-group-item">Ротенбуро - надо.</li>
+          {% else %}
+            <li class="list-group-item">Ротенбуро - не надо.</li>
+
+          {% endif %}
+          <li class="list-group-item">Предоплата -
+            {{ object.prepayment }}</li>
+          <li class="list-group-item">Веник бер. -
+            {{ object.birch_broom }}</li>
+          <li class="list-group-item">Веник дуб - {{ object.oak_broom }}</li>
+          <li class="list-group-item">Простыня - {{ object.bed_sheet }}</li>
+          <li class="list-group-item">Полотенце - {{ object.towel }}</li>
+          <li class="list-group-item">Халат - {{ object.robe }}</li>
+          <li class="list-group-item">Тапки - {{ object.slippers }}</li>
+          <li class="list-group-item">Комментарий - {{ object.comment }}</li>
+        </ul>
+        <a href="{% url 'bnovo:today_list' %}" style="text-decoration: 
+          #1a1d20">
+          <h4 class="card-footer ">Вернуться к ордерам</h4>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

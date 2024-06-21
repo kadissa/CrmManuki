@@ -1,0 +1,22 @@
+<div class="btn"></div>
+<div class="container class_form bg-gradient bg-opacity-50 bg-body col-lg-6
+    border rounded">
+  <h1 class="text-3 text-center text-success-emphasis">Аренда Банного комплекса</h1>
+    <p class="text-center text-danger bg-opacity-50 bg-body border 
+  rounded">
+      {% if bath_times%}
+    Минимальное время заказа 2 часа
+        {% elif user_id %}
+        Введите свои данные и выберите день
+        {% elif rotenburo_times %}
+        {% if times %}
+        	Ротенбуро {{ times|join:";  " }}
+          {% else %}
+          Выберите время для Ротенбуро
+        {% endif %} 
+      {% endif %}
+  </p>
+  <div class="row justify-content-center">
+  </div>
+</div>
+
