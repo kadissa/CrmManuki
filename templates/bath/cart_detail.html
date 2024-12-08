@@ -24,9 +24,9 @@
               </li>
             {% endif %}
           {% endfor %}
-{#          <li class="list-group-item text-info">#}
-{#            Стоимость доп. услуг - {{ appointment.services_price }}р.#}
-{#          </li>#}
+          {#          <li class="list-group-item text-info">#}
+          {#            Стоимость доп. услуг - {{ appointment.services_price }}р.#}
+          {#          </li>#}
           <li class="list-group-item text-info fst-italic">
             Ротенбуро - {{ rotenburo_price }}р.
           </li>
@@ -55,7 +55,7 @@
                 Заказать ротенбуро
               </button>
             </a>
-        {% endif %}
+          {% endif %}
           {% if appointment.services_price == 0 %}
             <a href="{% url 'confirm_date_time' appointment.pk %}"
                type="button"
@@ -70,8 +70,4 @@
       </div>
     </div>
   </div>
-
-
-
-
 {% endblock %}

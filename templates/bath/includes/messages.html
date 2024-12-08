@@ -10,10 +10,12 @@
     </ul>
   </div>
 {% else %}
-  {% if rotenburo_times%}
+  {% if not is_rotenburo_exist%}
+    {% if rotenburo_times%}
     <a href="{% url 'add_rotenburo' appointment.pk %}">
     {% elif bath_times %}
     <a href="{% url 'create_appointment' day user_id %}">
+  {% endif %}
   {% endif %}
     <button class="btn mt-3 btn-success" style="float: right"
             type="submit">

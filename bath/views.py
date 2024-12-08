@@ -26,6 +26,12 @@ def slots_not_one_by_one(request):
 
 
 def add_items(request, pk):
+    """
+    Add items to cart and save them to AppointmentItems
+    :param request: HttpRequest
+    :param pk: int, Appointment id
+    :return: HttpResponse
+    """
     cart = Cart(request)
     products = Product.objects.all()
     appointment = Appointment.objects.get(pk=pk)
@@ -34,6 +40,7 @@ def add_items(request, pk):
         cart.add_product(product=product,
                          quantity=quantity)
     if request.method == 'POST':
+        # Save cart items to AppointmentItem
         for item in cart.cart:
             AppointmentItem.objects.create(
                 appointment=appointment,
@@ -41,6 +48,7 @@ def add_items(request, pk):
                 price=cart.cart[item]['price'],
                 quantity=cart.cart[item]['quantity'],
             )
+        # Calculate total price for appointment items
         items_price = AppointmentItem.objects.filter(
             appointment=appointment)
         appointment_items_price = sum(item.total_price for item in items_price)
@@ -222,6 +230,8 @@ def get_rotenburo_times(request, pk):
 def add_rotenburo(request, pk):
     global times
     appointment = get_object_or_404(Appointment, pk=pk)
+    if Rotenburo.objects.filter(appointment=appointment).exists():
+        return redirect('confirm_date_time', pk)
     day = appointment.date.isoformat()
     start_time = times[0][:2]
     end_time = times[-1].split('-')[-1][:2]

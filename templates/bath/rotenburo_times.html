@@ -2,6 +2,9 @@
 {% load extend_filters %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_field %}
+{% block title %}
+  Ротенбуро
+{% endblock %}
 {% block content %}
   <br>
   {% include 'bath/includes/header.html' %}
@@ -19,18 +22,15 @@
         Без Ротенбуро
       </button>
     </a>
+{#    {% if is_rotenburo_exist %}#}
+      {% if times %}
+        {% include 'bath/includes/inputs/reset_times_input.html' %}
+      {% endif %}
+      </div>
+{#    {% endif %}#}
     {% if times %}
-      {% include 'bath/includes/inputs/reset_times_input.html' %}
+      {% include 'bath/includes/messages.html' %}
     {% endif %}
-  </div>
-
-  {% if times %}
-
-
-{% include 'bath/includes/messages.html' %}
-
-
-  {% endif %}
 {% endblock %}
 
 </div>
