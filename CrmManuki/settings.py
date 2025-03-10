@@ -24,13 +24,10 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "194.87.57.133",
     "manuki.ddns.net",
     "localhost",
     "127.0.0.1",
     "bath.manukien.ru",
-    "91.220.109.197",
-    "1175077-cb90033.tw1.ru",
 ]
 
 
@@ -43,7 +40,6 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "users.apps.UsersConfig",
-    "webhooks.apps.WebhooksConfig",
     "bnovo.apps.BnovoConfig",
     "django_extensions",
     "debug_toolbar",
@@ -155,11 +151,8 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.manuki.ddns.net",
     "https://*.manukien.ru",
     "http://*.manukien.ru",
-    "http://1175077-cb90033.tw1.ru",
 ]
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://127.0.0.1:6379/0"
 
 #  django_debug_toolbar
 INTERNAL_IPS = [

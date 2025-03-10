@@ -40,9 +40,9 @@ def get_all_booking(one_session: session):
                 "X-Requested-With": "XMLHttpRequest",
             },
             data={
-                # "dfrom": "2022-09-10",
-                "dfrom": datetime.date.today().strftime("%Y-%m-%d"),
-                "dto": "2024-12-31",
+                "dfrom": "2022-09-10",
+                # "dfrom": datetime.date.today().strftime("%Y-%m-%d"),
+                "dto": "2025-03-10",
                 "daily": 0,
             },
         )
