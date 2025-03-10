@@ -14,7 +14,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("users.urls")),
     path("auth/", include("django.contrib.auth.urls")),
-    path("easyweek/", include("webhooks.urls")),
     path("crm/", include("bnovo.urls")),
     path("order/", include("bath.urls")),
 ]
