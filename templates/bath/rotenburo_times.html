@@ -22,12 +22,10 @@
           Без Ротенбуро
         </button>
       </a>
-      {#    {% if is_rotenburo_exist %}#}
       {% if times %}
         {% include 'bath/includes/inputs/reset_times_input_rotenburo.html' %}
       {% endif %}
     </div>
-    {#    {% endif %}#}
     {% if times %}
       {% include 'bath/includes/messages.html' %}
     {% endif %}
