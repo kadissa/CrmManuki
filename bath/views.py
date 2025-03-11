@@ -1,4 +1,6 @@
 import datetime
+import time
+from cgitb import reset
 
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
@@ -10,17 +12,19 @@ from .cart import Cart
 from .forms import CustomerForm
 from .models import Customer, Appointment, Product, AppointmentItem, Rotenburo
 
-times = list()
+# times = list()
+time_dict = {}
 
 
 def error(request):
     return render(request, "error.html")
 
 
-def slots_not_one_by_one(request):
-    if len(times) > 1:
-        for i in range(len(times) - 1):
-            if times[i].split("-")[1][:2] != times[i + 1].split("-")[0][:2]:
+def slots_not_one_by_one(request, customer_id):
+    time_slots = time_dict.get(customer_id)
+    if len(time_slots) > 1:
+        for i in range(len(time_slots) - 1):
+            if time_slots[i].split("-")[1][:2] != time_slots[i + 1].split("-")[0][:2]:
                 return True
     return False
 
@@ -83,11 +87,12 @@ def confirm_date_time(request, appoint_id):
 
 
 def create_appointment(request, day, user_id):
-    global times
-    if not day or not times:
+    global time_dict
+    time_slots = time_dict.get(user_id)
+    if not day or not time_slots:
         return redirect("error")
-    times_formatted = sorted(times)
-    price = get_price(day, times)
+    times_formatted = sorted(time_slots)
+    price = get_price(day, time_slots)
     start_time = times_formatted[0][:5]
     end_time = times_formatted[-1][6:]
     customer = Customer.objects.get(pk=user_id)
@@ -98,9 +103,9 @@ def create_appointment(request, day, user_id):
         end_time=end_time,
         status="Не подтверждён",
         price=price,
-        amount=len(times),
+        amount=len(time_slots),
     )
-    times = list()
+    time_dict[user_id] = list()
     if created:
         return redirect("confirm_date_time", appointment.id)
     else:
@@ -108,10 +113,11 @@ def create_appointment(request, day, user_id):
 
 
 def get_customer_and_date(request):
-    global times
-    times = list()
+    global time_dict
     request_date = request.POST.get("date")
     customer_id = request.session.get("customer_id", 0)
+    time_dict[customer_id] = list()
+
     if Customer.objects.filter(id=customer_id).exists():
         customer = get_object_or_404(Customer, id=request.session["customer_id"])
         form = CustomerForm(request.POST or None, instance=customer)
@@ -140,8 +146,8 @@ def get_customer_and_date(request):
     return render(request, "bath/user.html", context)
 
 
-def get_time(request, day, user_id):
-    global times
+def get_time_slots(request, day, user_id):
+    global time_dict
     all_time_dict = {
         "11": "11:00-12:00",
         "12": "12:00-13:00",
@@ -158,6 +164,11 @@ def get_time(request, day, user_id):
     }
     today = datetime.date.today()
     request_time = request.POST.get("time")
+    customer_id = request.session.get("customer_id", 0)
+    reset_time_slots = request.POST.get("reset")
+    if reset_time_slots:
+        time_dict[customer_id] = list()
+        return HttpResponseClientRedirect(reverse("time", args=(day, customer_id)))
     appointments = Appointment.objects.filter(date=datetime.date.fromisoformat(day))
     for appointment in appointments:  # get available slots for booking
         start = appointment.start_time.isoformat("hours")
@@ -176,14 +187,20 @@ def get_time(request, day, user_id):
         "date": datetime.date.fromisoformat(day),
         "day": day,
         "user_id": user_id,
-        "times": times,
+        "times": time_dict.get(customer_id),
         "bath_times": True,
     }
+    print("request_time", request_time)
+    print("time_dict_from_get_time_slot", time_dict)
     if request_time:
-        times.append(request_time)
-        times.sort()
-        if slots_not_one_by_one(request):
+        if not time_dict.get(customer_id):
+            time_dict[customer_id] = [request_time]
+        else:
+            time_dict[customer_id].append(request_time)
+        time_dict.get(customer_id).sort()
+        if slots_not_one_by_one(request, customer_id):
             messages.warning(request, message="Нужно выбирать слоты подряд!")
+
         return HttpResponseClientRedirect(reverse("time", args=(day, user_id)))
     return render(request, "bath/time_slots.html", context)
 
@@ -201,11 +218,11 @@ def clear_cart(request, pk):
 
 
 def get_rotenburo_times(request, pk):
-    global times
+    global time_dict
     request_time = request.POST.get("time")
-    reset = request.POST.get("reset")
-    if reset:
-        times = list()
+    reset_time_slots = request.POST.get("reset")
+    if reset_time_slots:
+        time_dict[pk] = list()
         return HttpResponseClientRedirect(reverse("rotenburo_times", args=(pk,)))
     appointment = get_object_or_404(Appointment, id=pk)
     date = appointment.date
@@ -217,27 +234,34 @@ def get_rotenburo_times(request, pk):
             {str(key): str(key) + ":" + "00" + "-" + str(key + 1) + ":" + "00"}
         )
     if request_time:
-        times.append(request_time)
-        times.sort()
-        if slots_not_one_by_one(request):
+        if not time_dict.get(pk):
+            time_dict[pk] = [request_time]
+        else:
+            time_dict[pk].append(request_time)
+        time_dict[pk].sort()
+        if slots_not_one_by_one(request, pk):
             messages.warning(request, message="Нужно выбирать слоты подряд!")
         return HttpResponseClientRedirect(reverse("rotenburo_times", args=(pk,)))
     context = {
         "appointment": appointment,
         "available_slots": all_time_dict,
         "date": date,
-        "times": times,
+        "times": time_dict.get(pk),
         "rotenburo_times": True,
     }
     return render(request, "bath/rotenburo_times.html", context)
 
 
 def add_rotenburo(request, pk):
-    global times
+    global time_dict
+    if not time_dict:
+        return redirect("user")
+    times = time_dict.get(pk)
     appointment = get_object_or_404(Appointment, pk=pk)
     if Rotenburo.objects.filter(appointment=appointment).exists():
         return redirect("confirm_date_time", pk)
     day = appointment.date.isoformat()
+    print("time_dict_from_add_rotenburo=", time_dict)
     start_time = times[0][:2]
     end_time = times[-1].split("-")[-1][:2]
     Rotenburo.objects.update_or_create(
@@ -247,5 +271,6 @@ def add_rotenburo(request, pk):
         end_time=end_time,
         amount=len(times),
     )
-    times = list()
+    time_dict[pk] = list()
+    print("time_dict_post clear=", time_dict)
     return redirect("confirm_date_time", pk)

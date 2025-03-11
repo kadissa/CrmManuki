@@ -4,22 +4,22 @@
     <ul class="messages">
       {% for message in messages %}
         <li class="text-danger" {% if message.tags %} class=
-                "{{ message.tags }}"{% endif %}
+            "{{ message.tags }}"{% endif %}
         >{{ message }}</li>
       {% endfor %}
     </ul>
   </div>
 {% else %}
-  {% if not is_rotenburo_exist%}
-    {% if rotenburo_times%}
-    <a href="{% url 'add_rotenburo' appointment.pk %}">
+  {% if not is_rotenburo_exist %}
+    {% if rotenburo_times %}
+      <a href="{% url 'add_rotenburo' appointment.pk %}">
     {% elif bath_times %}
-    <a href="{% url 'create_appointment' day user_id %}">
+      <a href="{% url 'create_appointment' day user_id %}">
+    {% endif %}
   {% endif %}
-  {% endif %}
-    <button class="btn mt-3 btn-success" style="float: right"
-            type="submit">
-      Заказать
-    </button>
-  </a>
+
+<button class="btn mt-3 btn-success" style="float: right" type="submit">
+  Заказать
+</button>
+</a>
 {% endif %}

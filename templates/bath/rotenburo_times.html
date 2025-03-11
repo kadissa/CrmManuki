@@ -12,25 +12,25 @@
 
   <div class="container text-center" id="time-slots">
 
-  {% include 'bath/includes/time_slots_template.html' %}
+    {% include 'bath/includes/time_slots_template.html' %}
 
-  <div class="container text-center">
-    <a href="{% url 'confirm_date_time' appointment.pk %}">
-      <button class="btn mt-3 bg-primary-subtle border-info" style="float: 
+    <div class="container text-center">
+      <a href="{% url 'confirm_date_time' appointment.pk %}">
+        <button class="btn mt-3 bg-primary-subtle border-info" style="float:
         left"
-      >
-        Без Ротенбуро
-      </button>
-    </a>
-{#    {% if is_rotenburo_exist %}#}
+        >
+          Без Ротенбуро
+        </button>
+      </a>
+      {#    {% if is_rotenburo_exist %}#}
       {% if times %}
-        {% include 'bath/includes/inputs/reset_times_input.html' %}
+        {% include 'bath/includes/inputs/reset_times_input_rotenburo.html' %}
       {% endif %}
-      </div>
-{#    {% endif %}#}
+    </div>
+    {#    {% endif %}#}
     {% if times %}
       {% include 'bath/includes/messages.html' %}
     {% endif %}
-{% endblock %}
 
-</div>
+  </div>
+{% endblock %}

@@ -4,7 +4,7 @@
     {% for key, time_slot in available_slots.items %}
       <div class="col">
         {% with date|date:'w' as week_day %}
-          {% if time_slot not in times %}
+          {% if not times or time_slot not in times %}
             {% if week_day|str_to_int > 5  or week_day|str_to_int == 0 %}
               <label for="{{ time_slot }}" class="bg-opacity-50 
                 bg-success mt-3 
