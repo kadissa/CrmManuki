@@ -1,6 +1,4 @@
 import datetime
-import time
-from cgitb import reset
 
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
@@ -12,7 +10,6 @@ from .cart import Cart
 from .forms import CustomerForm
 from .models import Customer, Appointment, Product, AppointmentItem, Rotenburo
 
-# times = list()
 time_dict = {}
 
 
@@ -117,7 +114,6 @@ def get_customer_and_date(request):
     request_date = request.POST.get("date")
     customer_id = request.session.get("customer_id", 0)
     time_dict[customer_id] = list()
-
     if Customer.objects.filter(id=customer_id).exists():
         customer = get_object_or_404(Customer, id=request.session["customer_id"])
         form = CustomerForm(request.POST or None, instance=customer)
@@ -190,8 +186,6 @@ def get_time_slots(request, day, user_id):
         "times": time_dict.get(customer_id),
         "bath_times": True,
     }
-    print("request_time", request_time)
-    print("time_dict_from_get_time_slot", time_dict)
     if request_time:
         if not time_dict.get(customer_id):
             time_dict[customer_id] = [request_time]
@@ -200,7 +194,6 @@ def get_time_slots(request, day, user_id):
         time_dict.get(customer_id).sort()
         if slots_not_one_by_one(request, customer_id):
             messages.warning(request, message="Нужно выбирать слоты подряд!")
-
         return HttpResponseClientRedirect(reverse("time", args=(day, user_id)))
     return render(request, "bath/time_slots.html", context)
 
@@ -261,7 +254,6 @@ def add_rotenburo(request, pk):
     if Rotenburo.objects.filter(appointment=appointment).exists():
         return redirect("confirm_date_time", pk)
     day = appointment.date.isoformat()
-    print("time_dict_from_add_rotenburo=", time_dict)
     start_time = times[0][:2]
     end_time = times[-1].split("-")[-1][:2]
     Rotenburo.objects.update_or_create(
@@ -272,5 +264,4 @@ def add_rotenburo(request, pk):
         amount=len(times),
     )
     time_dict[pk] = list()
-    print("time_dict_post clear=", time_dict)
     return redirect("confirm_date_time", pk)
