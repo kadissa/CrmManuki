@@ -3,7 +3,7 @@
            id="{{ time_slot }}"
            value="Сбросить"
            class="btn mt-3 bg-primary-subtle border-info"
-           hx-post="{% url 'time' day user_id %}"
+           hx-post="{% url 'rotenburo_times' appointment.pk %}"
            hx-target=""
            hx-trigger="click"
            hx-push-url="true"
