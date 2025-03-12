@@ -247,7 +247,7 @@ def get_rotenburo_times(request, pk):
 
 def add_rotenburo(request, pk):
     global time_dict
-    if not time_dict:
+    if not time_dict.get(pk):
         return redirect("user")
     times = time_dict.get(pk)
     appointment = get_object_or_404(Appointment, pk=pk)
