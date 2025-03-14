@@ -2,9 +2,26 @@ from django.core.validators import MinValueValidator, EmailValidator
 from django.db import models
 
 
+all_time_dict = {
+    "11": "11:00-12:00",
+    "12": "12:00-13:00",
+    "13": "13:00-14:00",
+    "14": "14:00-15:00",
+    "15": "15:00-16:00",
+    "16": "16:00-17:00",
+    "17": "17:00-18:00",
+    "18": "18:00-19:00",
+    "19": "19:00-20:00",
+    "20": "20:00-21:00",
+    "21": "21:00-22:00",
+    "22": "22:00-23:00",
+}
+
+
 class Customer(models.Model):
     name = models.CharField("Имя", max_length=60)
-    surname = models.CharField("Фамилия", max_length=50, blank=True, null=True)
+    surname = models.CharField("Фамилия", max_length=50, blank=True,
+                               null=True)
     email = models.EmailField(
         max_length=60, validators=[EmailValidator()], blank=True, null=True
     )
@@ -20,8 +37,10 @@ class Customer(models.Model):
 
 class Product(models.Model):
     name = models.CharField("Название", max_length=60)
-    quantity = models.PositiveIntegerField("Количество", null=True, blank=True)
-    price = models.PositiveSmallIntegerField("Цена", blank=True, null=True)
+    quantity = models.PositiveIntegerField("Количество", null=True,
+                                           blank=True)
+    price = models.PositiveSmallIntegerField("Цена", blank=True,
+                                             null=True)
     slug = models.SlugField(max_length=60, db_index=True)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -41,25 +60,34 @@ class Appointment(models.Model):
     customer = models.ForeignKey(
         Customer, on_delete=models.CASCADE, verbose_name="Гость"
     )
-    status = models.CharField("Статус", max_length=60, blank=True, null=True)
+    status = models.CharField("Статус", max_length=60, blank=True,
+                              null=True)
     date = models.DateField()
     start_time = models.TimeField("Начало")
     end_time = models.TimeField("Конец")
-    duration = models.CharField("Продолжительность", max_length=60, blank=True)
+    duration = models.CharField("Продолжительность", max_length=60,
+                                blank=True)
     price = models.PositiveSmallIntegerField("Стоимость бани")
-    services_price = models.PositiveIntegerField("Цена услуг", default=0)
+    services_price = models.PositiveIntegerField("Цена услуг",
+                                                 default=0)
     full_price = models.PositiveIntegerField("Стоимость заказа")
     amount = models.PositiveSmallIntegerField(
-        "Количество часов", blank=True, null=True, validators=[MinValueValidator(2)]
+        "Количество часов", blank=True, null=True,
+        validators=[MinValueValidator(2)]
     )
-    source = models.CharField("Источник", max_length=60, blank=True, null=True)
-    full_name = models.CharField("Полное имя", max_length=60, blank=True, null=True)
-    comment = models.CharField("Комментарий", max_length=60, blank=True, null=True)
-    tag = models.CharField("Примечание", max_length=200, blank=True, null=True)
+    source = models.CharField("Источник", max_length=60,
+                              blank=True, null=True)
+    full_name = models.CharField("Полное имя", max_length=60,
+                                 blank=True, null=True)
+    comment = models.CharField("Комментарий", max_length=60,
+                               blank=True, null=True)
+    tag = models.CharField("Примечание", max_length=200,
+                           blank=True, null=True)
     people_count = models.PositiveSmallIntegerField(
         "Кол-во чел.", blank=True, null=True
     )
-    prepayment = models.PositiveSmallIntegerField("Предоплата", blank=True, null=True)
+    prepayment = models.PositiveSmallIntegerField("Предоплата",
+                                                  blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -73,6 +101,16 @@ class Appointment(models.Model):
     def save(self, *args, **kwargs):
         self.full_price = self.price + self.services_price
         super().save(*args, **kwargs)
+
+    @property
+    def busy_time(self):
+        time_list = []
+        start_time = self.start_time.isoformat("hours")
+        end_time = self.end_time.isoformat("hours")
+        time_range = range(int(start_time) - 1, int(end_time) + 1)
+        for time in time_range:
+            time_list.append(all_time_dict.get(str(time)))
+        return time_list
 
 
 class AppointmentItem(models.Model):
@@ -91,8 +129,10 @@ class AppointmentItem(models.Model):
         related_name="appointment_items",
     )
     price = models.CharField("цена", max_length=50)
-    total_price = models.PositiveIntegerField("Стоимость", blank=True, null=True)
-    quantity = models.CharField("количество", max_length=15, null=True, blank=True)
+    total_price = models.PositiveIntegerField("Стоимость",
+                                              blank=True, null=True)
+    quantity = models.CharField("количество", max_length=15,
+                                null=True, blank=True)
 
     def save(self, *args, **kwargs):
         self.total_price = int(self.price) * int((self.quantity or 0))

@@ -11,6 +11,20 @@ from .forms import CustomerForm
 from .models import Customer, Appointment, Product, AppointmentItem, Rotenburo
 
 time_dict = {}
+all_time_dict = {
+    "11": "11:00-12:00",
+    "12": "12:00-13:00",
+    "13": "13:00-14:00",
+    "14": "14:00-15:00",
+    "15": "15:00-16:00",
+    "16": "16:00-17:00",
+    "17": "17:00-18:00",
+    "18": "18:00-19:00",
+    "19": "19:00-20:00",
+    "20": "20:00-21:00",
+    "21": "21:00-22:00",
+    "22": "22:00-23:00",
+}
 
 
 def error(request):
@@ -65,11 +79,14 @@ def cart_detail(request, pk):
         rotenburo_price = Rotenburo.objects.get(appointment=appointment).price
     else:
         rotenburo_price = 0
+    # items = AppointmentItem.objects.filter(appointment=appointment)
     context = {
+        # "items": items,
         "cart": cart,
         "appointment": appointment,
         "rotenburo_price": rotenburo_price,
     }
+
     return render(request, "bath/cart_detail.html", context)
 
 
@@ -93,6 +110,10 @@ def create_appointment(request, day, user_id):
     start_time = times_formatted[0][:5]
     end_time = times_formatted[-1][6:]
     customer = Customer.objects.get(pk=user_id)
+    day_appointments = Appointment.objects.filter(date=day)
+    for instance in day_appointments:
+        if any(time in time_slots for time in instance.busy_time):
+            return redirect("time", day, user_id)
     appointment, created = Appointment.objects.update_or_create(
         date=day,
         customer=customer,
@@ -114,11 +135,13 @@ def get_customer_and_date(request):
     request_date = request.POST.get("date")
     customer_id = request.session.get("customer_id", 0)
     time_dict[customer_id] = list()
+
     if Customer.objects.filter(id=customer_id).exists():
         customer = get_object_or_404(Customer, id=request.session["customer_id"])
         form = CustomerForm(request.POST or None, instance=customer)
     else:
         form = CustomerForm(request.POST or None)
+
     if form.is_valid():
         if not Customer.objects.filter(
             phone=form.cleaned_data["phone"], email=form.cleaned_data["email"]
@@ -129,6 +152,7 @@ def get_customer_and_date(request):
         )
         request.session["customer_id"] = customer.id
         return redirect("time", request_date, customer.id)
+
     today = datetime.date.today()
     min_day_value = today.isoformat()
     max_day_value = today + datetime.timedelta(days=60)
@@ -143,21 +167,7 @@ def get_customer_and_date(request):
 
 
 def get_time_slots(request, day, user_id):
-    global time_dict
-    all_time_dict = {
-        "11": "11:00-12:00",
-        "12": "12:00-13:00",
-        "13": "13:00-14:00",
-        "14": "14:00-15:00",
-        "15": "15:00-16:00",
-        "16": "16:00-17:00",
-        "17": "17:00-18:00",
-        "18": "18:00-19:00",
-        "19": "19:00-20:00",
-        "20": "20:00-21:00",
-        "21": "21:00-22:00",
-        "22": "22:00-23:00",
-    }
+    global time_dict, all_time_dict
     today = datetime.date.today()
     request_time = request.POST.get("time")
     customer_id = request.session.get("customer_id", 0)

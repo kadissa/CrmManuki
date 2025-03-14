@@ -27,6 +27,7 @@ ALLOWED_HOSTS = [
     "manuki.ddns.net",
     "localhost",
     "127.0.0.1",
+    "127.0.0.2",
     "bath.manukien.ru",
 ]
 
