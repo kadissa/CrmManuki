@@ -35,7 +35,8 @@ def slots_not_one_by_one(request, customer_id):
     time_slots = time_dict.get(customer_id)
     if len(time_slots) > 1:
         for i in range(len(time_slots) - 1):
-            if time_slots[i].split("-")[1][:2] != time_slots[i + 1].split("-")[0][:2]:
+            if time_slots[i].split("-")[1][:2] != time_slots[i + 1].split("-")[
+                                                      0][:2]:
                 return True
     return False
 
@@ -111,7 +112,7 @@ def create_appointment(request, day, user_id):
     end_time = times_formatted[-1][6:]
     customer = Customer.objects.get(pk=user_id)
     day_appointments = Appointment.objects.filter(date=day)
-    for instance in day_appointments:
+    for instance in day_appointments:  # check if time slots are busy by another customer
         if any(time in time_slots for time in instance.busy_time):
             return redirect("time", day, user_id)
     appointment, created = Appointment.objects.update_or_create(
@@ -137,14 +138,16 @@ def get_customer_and_date(request):
     time_dict[customer_id] = list()
 
     if Customer.objects.filter(id=customer_id).exists():
-        customer = get_object_or_404(Customer, id=request.session["customer_id"])
+        customer = get_object_or_404(Customer,
+                                     id=request.session["customer_id"])
         form = CustomerForm(request.POST or None, instance=customer)
     else:
         form = CustomerForm(request.POST or None)
 
     if form.is_valid():
         if not Customer.objects.filter(
-            phone=form.cleaned_data["phone"], email=form.cleaned_data["email"]
+                phone=form.cleaned_data["phone"],
+                email=form.cleaned_data["email"]
         ).exists():
             form.save()
         customer = Customer.objects.get(
@@ -174,8 +177,10 @@ def get_time_slots(request, day, user_id):
     reset_time_slots = request.POST.get("reset")
     if reset_time_slots:
         time_dict[customer_id] = list()
-        return HttpResponseClientRedirect(reverse("time", args=(day, customer_id)))
-    appointments = Appointment.objects.filter(date=datetime.date.fromisoformat(day))
+        return HttpResponseClientRedirect(
+            reverse("time", args=(day, customer_id)))
+    appointments = Appointment.objects.filter(
+        date=datetime.date.fromisoformat(day))
     for appointment in appointments:  # get available slots for booking
         start = appointment.start_time.isoformat("hours")
         end = appointment.end_time.isoformat("hours")
@@ -226,7 +231,8 @@ def get_rotenburo_times(request, pk):
     reset_time_slots = request.POST.get("reset")
     if reset_time_slots:
         time_dict[pk] = list()
-        return HttpResponseClientRedirect(reverse("rotenburo_times", args=(pk,)))
+        return HttpResponseClientRedirect(
+            reverse("rotenburo_times", args=(pk,)))
     appointment = get_object_or_404(Appointment, id=pk)
     date = appointment.date
     start_time = datetime.time.isoformat(appointment.start_time)[:5]
@@ -244,7 +250,8 @@ def get_rotenburo_times(request, pk):
         time_dict[pk].sort()
         if slots_not_one_by_one(request, pk):
             messages.warning(request, message="Нужно выбирать слоты подряд!")
-        return HttpResponseClientRedirect(reverse("rotenburo_times", args=(pk,)))
+        return HttpResponseClientRedirect(
+            reverse("rotenburo_times", args=(pk,)))
     context = {
         "appointment": appointment,
         "available_slots": all_time_slots,
