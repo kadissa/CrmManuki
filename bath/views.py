@@ -231,9 +231,9 @@ def get_rotenburo_times(request, pk):
     date = appointment.date
     start_time = datetime.time.isoformat(appointment.start_time)[:5]
     end_time = datetime.time.isoformat(appointment.end_time)[:5]
-    all_time_dict = {}
+    all_time_slots = {}
     for key in range(int(start_time[:2]), int(end_time[:2])):
-        all_time_dict.update(
+        all_time_slots.update(
             {str(key): str(key) + ":" + "00" + "-" + str(key + 1) + ":" + "00"}
         )
     if request_time:
@@ -247,7 +247,7 @@ def get_rotenburo_times(request, pk):
         return HttpResponseClientRedirect(reverse("rotenburo_times", args=(pk,)))
     context = {
         "appointment": appointment,
-        "available_slots": all_time_dict,
+        "available_slots": all_time_slots,
         "date": date,
         "times": time_dict.get(pk),
         "rotenburo_times": True,

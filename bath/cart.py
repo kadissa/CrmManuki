@@ -57,6 +57,6 @@ class Cart(object):
         return total
 
     def clear(self):
-        # удаление корзины из сессии
+        """удаление корзины из сессии"""
         del self.session["cart"]
         self.session.modified = True
